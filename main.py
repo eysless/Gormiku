@@ -1,26 +1,23 @@
+import pkgutil
+import importlib
 from GormikuIps import SimpleIDSIPS
 
 ids = SimpleIDSIPS()
 
-################################## TO ADD CUSTOM FUNCTION ################################################
-'''
-def customRule(flow):
-    ua = flow.request.headers.get('User-Agent', '')
-    try:
-        body = flow.request.get_text()
-    except ValueError():
-        body = ''
-    return ua == 'checker' and body == 'attacco sgravato'
+# auto‐discover + register everything in rules/
+for finder, modname, ispkg in pkgutil.iter_modules(['rules']):
+    module = importlib.import_module(f"rules.{modname}")
 
-ids.addRequestFunction(customRule)
+    # register regex patterns
+    for pattern, location, ignore_case in getattr(module, "REQUEST_PATTERNS", []):
+        ids.addRequestPattern(pattern, location, ignore_case)
+    for pattern, location, ignore_case in getattr(module, "RESPONSE_PATTERNS", []):
+        ids.addResponsePattern(pattern, location, ignore_case)
 
-IMPORTANT: THE FUNCTION MUST ONLY PASS THE FLOW ARGUMENT
-'''
-################################## TO ADD CUSTOM REGEX ################################################
-'''
-regex = '/customRegex/'
-ids.addRequestPattern(regex, 'body', CASESENSITIVE)
+    # register function‐based rules
+    for func in getattr(module, "REQUEST_FUNCTIONS", []):
+        ids.addRequestFunction(func)
+    for func in getattr(module, "RESPONSE_FUNCTIONS", []):
+        ids.addResponseFunction(func)
 
-THE LOCATION OPTIONS ARE: 'url', 'body', 'headers', 'all'
-'''
 addons = [ids]

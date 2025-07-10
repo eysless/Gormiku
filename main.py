@@ -1,6 +1,7 @@
 from mitmproxy import http
 import re
-
+CASEINSENSITIVE = True
+CASESENSITIVE = False
 class SimpleIDSIPS:
     """Minimal IDS/IPS plugin skeleton"""
     def __init__(self):
@@ -49,7 +50,7 @@ class SimpleIDSIPS:
         return
     
 
-    def addRequestFunction(self, func):
+    def addResponseFunction(self, func):
         # TODO: 
         return
 
@@ -110,17 +111,11 @@ class SimpleIDSIPS:
                     raise ValueError(f"Invalid response location: {location}")
         # TODO: aggiungere controllo delle specifiche funzioni
 
-    def addRegexFromRequest(self, flow: http.HTTPFlow):
-        # TODO:
-        return
 
-    def addRegexFromResponse(self, flow: http.HTTPFlow):
-        # TODO: 
-        return
 ids = SimpleIDSIPS()
 
+################################## TO ADD CUSTOM FUNCTION ################################################
 '''
-to add custom rules:
 def customRule(flow):
     ua = flow.request.headers.get('User-Agent', '')
     try:
@@ -131,5 +126,9 @@ def customRule(flow):
 
 ids.addRequestFunction(customRule)
 '''
-
+################################## TO ADD CUSTOM REGEX ################################################
+'''
+regex = '/customRegex/'
+ids.addRequestPattern(regex, 'body', CASESENSITIVE)
+'''
 addons = [ids]

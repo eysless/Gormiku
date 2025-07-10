@@ -1,7 +1,9 @@
 from mitmproxy import http
 import re
+
 CASEINSENSITIVE = True
 CASESENSITIVE = False
+
 class SimpleIDSIPS:
     """Minimal IDS/IPS plugin skeleton"""
     def __init__(self):
@@ -46,14 +48,11 @@ class SimpleIDSIPS:
 
 
     def addRequestFunction(self, func):
-        # TODO: 
-        return
+        self.request_rules.append(func)
     
 
     def addResponseFunction(self, func):
-        # TODO: 
-        return
-
+        self.response_rules.append(func)
 
     def request(self, flow: http.HTTPFlow) -> None:
         # TODO: inspect flow.request and drop if necessary
@@ -82,9 +81,18 @@ class SimpleIDSIPS:
                 else:
                     raise ValueError(f"Invalid response location: {location}")
 
-        # TODO: aggiungere controllo delle specifiche funzioni
+        # Checking custom functions
+        for rule in self.request_rules:
+            try:
+                if rule(flow):
+                    flow.kill()
+                    return
+            except Exception:
+                pass
 
     def response(self, flow: http.HTTPFlow) -> None:
+        if flow.response is None:
+            return
         url = flow.request.pretty_url
         headers = '\r\n'.join(f"{k}: {v}" for k, v in flow.response.headers.items())
         try:
@@ -109,7 +117,14 @@ class SimpleIDSIPS:
                         return
                 else:
                     raise ValueError(f"Invalid response location: {location}")
-        # TODO: aggiungere controllo delle specifiche funzioni
+        for rule in self.request_rules:
+            try:
+                if rule(flow):
+                    flow.kill()
+                    return
+            except Exception:
+                pass
+
 
 
 ids = SimpleIDSIPS()

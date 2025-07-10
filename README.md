@@ -11,10 +11,10 @@ Disable redirects
 If you want to persist this across reboots, you need to adjust your /etc/sysctl.conf
 
 Iptables ruleset: 
-'''sh
+```sh
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport {Service port} -j REDIRECT --to-port {mitmproxy port}
 ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport {Service port} -j REDIRECT --to-port {mitmproxy port}
-'''
+```
 If you want to persist this across reboots, you can use the iptables-persistent
 
 Then fire up the proxy

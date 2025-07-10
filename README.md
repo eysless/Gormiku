@@ -18,4 +18,13 @@ ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport {Service port} -j REDIRECT
 If you want to persist this across reboots, you can use the iptables-persistent
 
 Then fire up the proxy
-`mitmproxy --mode transparent --showhost --set block_global=false -s main.py -listen_port {mitmproxy port}`
+```
+mitmproxy --mode transparent --showhost --set block_global=false -s main.py -listen_port {mitmproxy port}
+```
+
+## HOW TO ADD CUSTOM RULES
+1. Create your own file in the rules folder (read template for how to do it)
+2. Create your rule:
+    - Custiom function go in the _FUNCTIONS list
+    - Custom regexes go in the _PATTERNS list
+3. Profit???

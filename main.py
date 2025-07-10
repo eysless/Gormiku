@@ -140,10 +140,14 @@ def customRule(flow):
     return ua == 'checker' and body == 'attacco sgravato'
 
 ids.addRequestFunction(customRule)
+
+IMPORTANT: THE FUNCTION MUST ONLY PASS THE FLOW ARGUMENT
 '''
 ################################## TO ADD CUSTOM REGEX ################################################
 '''
 regex = '/customRegex/'
 ids.addRequestPattern(regex, 'body', CASESENSITIVE)
+
+THE LOCATION OPTIONS ARE: 'url', 'body', 'headers', 'all'
 '''
 addons = [ids]
